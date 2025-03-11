@@ -1,0 +1,128 @@
+arch = [
+# KDE
+"ark",
+"dolphin",
+"gwenview",
+"kate",
+"kfind",
+"kolourpaint",
+"konsole",
+"kwalletmanager",
+"plasma-meta",
+"plasma-workspace",
+"sddm",
+"spectacle",
+
+# Fonts & IME
+"adobe-source-han-sans-otc-fonts",
+"adobe-source-han-serif-otc-fonts",
+"adobe-source-sans-fonts",
+"fcitx5",
+"fcitx5-configtool",
+"fcitx5-gtk",
+"fcitx5-qt",
+"fcitx5-rime",
+"noto-fonts-emoji",
+"rime-ice-git",
+"ttf-dejavu",
+"ttf-jetbrains-mono",
+
+# Tools
+"archlinuxcn-keyring",
+"fd",
+"firewalld",
+"fish",
+"fwupd",
+"git",
+"less",
+"metapac-bin",
+"ncdu",
+"nix",
+"7zip",
+"paru",
+"unrar",
+"wl-clipboard",
+"xsel",
+
+# GUI apps
+"bitwarden",
+"firefox",
+"ghostty",
+"gnome-disk-utility",
+"goldendict-ng",
+"google-chrome",
+"libreoffice-fresh",
+"localsend",
+"meld",
+"mpv",
+"obsidian",
+"spotify",
+"steam",
+"telegram-desktop",
+"visual-studio-code-bin",
+"wechat-universal-bwrap",
+"wireshark-qt",
+
+# Work tools
+"networkmanager-strongswan",
+
+# VM & container
+"podman-docker",
+"distrobox",
+# used by distrobox https://github.com/89luca89/distrobox/issues/1198#issuecomment-1936899389
+"flatpak",
+"virtualbox",
+"virtualbox-guest-iso",
+"virtualbox-host-modules-arch",
+
+# To be removed
+"xorg-xlsclients",
+
+# System
+"base",
+"base-devel",
+"xfsprogs",
+"intel-ucode",
+"linux",
+"linux-firmware",
+
+# System audio
+"gst-plugin-pipewire",
+"libpulse",
+"pipewire",
+"pipewire-alsa",
+"pipewire-jack",
+"pipewire-pulse",
+"wireplumber",
+
+# System graphics driver
+"intel-media-driver",
+"libva-intel-driver",
+"mesa",
+"vulkan-intel",
+"vulkan-radeon",
+"xf86-video-amdgpu",
+"xf86-video-ati",
+"xf86-video-nouveau",
+"xf86-video-vmware",
+"xorg-xwayland",
+
+# System common
+"htop",
+"iwd",
+"nano",
+"openssh",
+"smartmontools",
+"vim",
+"wget",
+"wireless_tools",
+"wpa_supplicant",
+"xdg-utils",
+
+# System misc
+"efibootmgr",
+"network-manager-applet",
+"networkmanager",
+"sof-firmware",
+"zram-generator",
+]

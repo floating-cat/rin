@@ -10,7 +10,7 @@ mkdir -p ~/.config/nix/
 echo "experimental-features = nix-command flakes" > ~/.config/nix/nix.conf
 
 sudo cryptsetup luksChangeKey /dev/nvme0n1p2 --iter-time 1000
-sudo systemctl enable --now fwupd-refresh.timer systemd-oomd.service libvirtd virtlogd
+sudo systemctl enable --now fwupd-refresh.timer systemd-oomd.service
 
 atuin import auto
 
@@ -18,13 +18,24 @@ eval "$(ssh-agent -c)"
 ssh-add ~/.ssh/id_ed25519 </dev/null
 ssh-add ~/.ssh/id_ed25519_rin </dev/null
 
-distrobox create --name arch --init --image quay.io/toolbx-images/archlinux-toolbox:latest --home ~/Soft/container --volume /etc/pacman.d/:/etc/pacman.d
+distrobox create --name arch --image quay.io/toolbx-images/archlinux-toolbox:latest --home ~/Soft/container --volume /etc/pacman.d/:/etc/pacman.d
+
+# use PKGEXT='.pkg.tar' in /etc/makepkg.conf
 
 # for distrobox
-sudo timedatectl set-timezone Asia/Shanghai
 sudo pacman -S gtk3 gnome-keyring seahorse helix
-paru -S yourkit bubblejail 115pc
 distrobox-export -a jetbrains-toolbox
 distrobox-export -a yourkit
 
-# use PKGEXT='.pkg.tar' in /etc/makepkg.conf
+alias git='/usr/bin/distrobox-host-exec /usr/bin/git'
+funcsave git
+
+# for intellij idea
+echo "[Desktop Entry]
+Name=Dolphin
+Exec=dolphin %u
+" >> ~/.local/share/applications/dolphin.desktop
+sudo ln -s /usr/bin/distrobox-host-exec /usr/bin/dolphin
+paru qt6-base # needed for xdg-mime command
+set PATH $PATH:/usr/lib/qt6/bin/
+xdg-mime default dolphin.desktop inode/directory

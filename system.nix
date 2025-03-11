@@ -13,9 +13,6 @@
           fs.inotify.max_user_watches = 2524288
           kernel.perf_event_paranoid = 1
         '';
-        "modprobe.d/kvm.conf".text = ''
-          options kvm_intel nested=1
-        '';
         "udev/rules.d/99-vial.rules".text = ''
           KERNEL=="hidraw*", SUBSYSTEM=="hidraw", ATTRS{serial}=="*vial:f64c2b3c*", MODE="0660", GROUP="users", TAG+="uaccess", TAG+="udev-acl"
         '';

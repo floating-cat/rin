@@ -13,7 +13,7 @@ in
 {
   home.username = "username";
   home.homeDirectory = "/home/username";
-  home.stateVersion = "24.05";
+  home.stateVersion = "24.11";
 
   home.packages = with pkgs; [
     emptyDirectory
@@ -43,19 +43,10 @@ in
       export GTK_USE_PORTAL=1
     '';
     "${config.xdg.configHome}/environment.d/envvars.conf".text = ''
-      GTK_IM_MODULE=fcitx
-      QT_IM_MODULE=fcitx
+      QT_IM_MODULES="wayland;fcitx;ibus"
       XMODIFIERS=@im=fcitx
 
       GTK_USE_PORTAL=1
-    '';
-    "${config.xdg.dataHome}/fcitx5/rime/default.custom.yaml".text = ''
-      patch:
-        __include: rime_ice_suggestion:/
-    '';
-    "${config.xdg.dataHome}/fcitx5/rime/rime_ice.custom.yaml".text = ''
-      patch:
-        melt_eng/initial_quality: 0
     '';
 
     "${config.xdg.configHome}/autostart/ssh-add.desktop".text = ''
@@ -74,15 +65,24 @@ in
       [options]
       BottomUp
     '';
-    "${config.xdg.configHome}/pacdef/groups/packages.ini".source = ./archlinux_system_packages.ini;
-    "${config.xdg.configHome}/pacdef/pacdef.yaml".text = ''
-      disabled_backends: ["python", "rust"]
+    "${config.xdg.configHome}/metapac/groups/packages.toml".source = ./archlinux_system_packages.toml;
+    "${config.xdg.configHome}/metapac/config.toml".text = ''
+      arch_package_manager = "paru"
     '';
 
     "${config.xdg.configHome}/vim/helix.vim".source = builtins.fetchurl {
       url = "https://raw.githubusercontent.com/chtenb/helix.vim/main/helix.vim";
-      sha256 = "1rygni1yc0vj9idkp4wd7pf46v8yyhbw8rxsys3f5vwa5r59agbc";
+      sha256 = "18wmd9jgsy8r17mpkpw8zjp52xjfbb6bc98cx6135qilif9fjrk5";
     };
+
+    "${config.xdg.configHome}/atuin/themes/my-theme.toml".text = ''
+      [theme]
+      name = "my-theme"
+      parent = ""
+
+      [colors]
+      Annotation = "white"
+    ''; 
 
     "${config.xdg.configHome}/mpv/mpv.conf".text = ''
       window-scale=0.5
@@ -94,7 +94,6 @@ in
   };
 
   home = {
-    sessionPath = mkIf isLinux [ "$HOME/.local/share/JetBrains/Toolbox/scripts" ];
     sessionVariables = {
       STARSHIP_LOG = "error";
     };
@@ -104,20 +103,20 @@ in
   };
 
   programs = {
-    kitty = {
+    ghostty = {
       enable = true;
       package = pkgs.emptyDirectory;
-      extraConfig = ''
-        mouse_map right press ungrabbed no-op
-        mouse_map right click ungrabbed copy_to_clipboard
-      '';
-      keybindings = {
-        "ctrl+c" = "copy_or_interrupt";
-      };
       settings = {
-        confirm_os_window_close = 0;
+        theme = "Red Alert";
+        confirm-close-surface = false;
+        keybind = [
+          "performable:ctrl+c=copy_to_clipboard"
+          "ctrl+v=paste_from_clipboard"
+        ];
+        app-notifications = "no-clipboard-copy";
       };
-      theme = "Red Alert";
+      # we use Ghostty package from local system so no bat syntax file in nix store
+      installBatSyntax = false;
     };
     fish = {
       enable = true;
@@ -164,7 +163,10 @@ in
     atuin = {
       enable = true;
       settings = {
+        theme.name = "my-theme";
         prefers_reduced_motion = true;
+        # solve https://github.com/atuinsh/atuin/issues/2522
+        inline_height = 0;
       };
     };
     zoxide.enable = true;
@@ -221,23 +223,34 @@ in
       };
     };
   };
-  # Workaround https://github.com/Mic92/sops-nix/issues/478
-  home.activation.setupEtc = config.lib.dag.entryAfter [ "writeBoundary" ] ''
-    run /usr/bin/systemctl start --user sops-nix
-  '';
+
+  # soft linked rime config files don't work for some reason so manually copy it as a workaround
+  home.activation.copyRimeIceCustomFile = config.lib.dag.entryAfter [ "writeBoundary" ] ''
+    cp -f "${config.xdg.configHome}/home-manager/rime/default.custom.yaml" "${config.xdg.dataHome}/fcitx5/rime/default.custom.yaml"
+    cp -f "${config.xdg.configHome}/home-manager/rime/rime_ice.custom.yaml" "${config.xdg.dataHome}/fcitx5/rime/rime_ice.custom.yaml"
+'';
 
   programs.plasma = mkIf isLinux {
     enable = true;
+    configFile = {
+      "kdeglobals"."KDE"."SingleClick" = true;
+      "kwinrc"."Wayland"."InputMethod[$e]" = "/usr/share/applications/org.fcitx.Fcitx5.desktop";
+    };
     shortcuts = {
       "services.org.kde.spectacle.desktop" = {
         ActiveWindowScreenShot = [ ];
         FullScreenScreenShot = [ ];
-        RecordRegion = "Ctrl+Print";
+        RecordRegion = "Alt+Print";
         RecordScreen = [ ];
         RecordWindow = [ ];
         RectangularRegionScreenShot = "Print";
         WindowUnderCursorScreenShot = [ ];
-        _launch = "Shift+Print";
+        _launch = "Ctrl+Print";
+      };
+    };
+    powerdevil.AC = {
+      autoSuspend = {
+        action = "nothing";
       };
     };
   };
@@ -245,8 +258,6 @@ in
   nix.package = pkgs.nix;
   nix.extraOptions = ''
     experimental-features = nix-command flakes
-    auto-optimise-store = true
-    keep-outputs = true
     max-jobs = auto
   '';
   news.display = "silent";
