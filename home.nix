@@ -68,21 +68,13 @@ in
     "${config.xdg.configHome}/metapac/groups/packages.toml".source = ./archlinux_system_packages.toml;
     "${config.xdg.configHome}/metapac/config.toml".text = ''
       arch_package_manager = "paru"
+      disabled_backends = ["vscode"]
     '';
 
     "${config.xdg.configHome}/vim/helix.vim".source = builtins.fetchurl {
       url = "https://raw.githubusercontent.com/chtenb/helix.vim/main/helix.vim";
       sha256 = "18wmd9jgsy8r17mpkpw8zjp52xjfbb6bc98cx6135qilif9fjrk5";
     };
-
-    "${config.xdg.configHome}/atuin/themes/my-theme.toml".text = ''
-      [theme]
-      name = "my-theme"
-      parent = ""
-
-      [colors]
-      Annotation = "white"
-    ''; 
 
     "${config.xdg.configHome}/mpv/mpv.conf".text = ''
       window-scale=0.5
@@ -167,6 +159,12 @@ in
         prefers_reduced_motion = true;
         # solve https://github.com/atuinsh/atuin/issues/2522
         inline_height = 0;
+      };
+      themes.my-theme = {
+        theme.name = "My Theme";
+        colors = {
+          Annotation = "white";
+        };
       };
     };
     zoxide.enable = true;
