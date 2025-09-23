@@ -13,7 +13,7 @@ in
 {
   home.username = "username";
   home.homeDirectory = "/home/username";
-  home.stateVersion = "24.11";
+  home.stateVersion = "25.05";
 
   home.packages = with pkgs; [
     emptyDirectory
@@ -195,8 +195,8 @@ in
   };
 
   imports = [
-    inputs.sops-nix.homeManagerModules.sops
-    inputs.plasma-manager.homeManagerModules.plasma-manager
+    inputs.sops-nix.homeModules.sops
+    inputs.plasma-manager.homeModules.plasma-manager
   ];
   sops = {
     defaultSopsFile = ./secrets.yaml;
