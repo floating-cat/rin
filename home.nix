@@ -13,10 +13,9 @@ in
 {
   home.username = "username";
   home.homeDirectory = "/home/username";
-  home.stateVersion = "25.05";
+  home.stateVersion = "25.11";
 
   home.packages = with pkgs; [
-    emptyDirectory
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
@@ -65,15 +64,16 @@ in
       [options]
       BottomUp
     '';
-    "${config.xdg.configHome}/metapac/groups/packages.toml".source = ./archlinux_system_packages.toml;
+    "${config.xdg.configHome}/metapac/groups/all.toml".source = ./archlinux_system_packages.toml;
     "${config.xdg.configHome}/metapac/config.toml".text = ''
-      arch_package_manager = "paru"
-      disabled_backends = ["vscode"]
+      enabled_backends = ["arch"]
+      [arch]
+      package_manager = "paru"
     '';
 
     "${config.xdg.configHome}/vim/helix.vim".source = builtins.fetchurl {
       url = "https://raw.githubusercontent.com/chtenb/helix.vim/main/helix.vim";
-      sha256 = "18wmd9jgsy8r17mpkpw8zjp52xjfbb6bc98cx6135qilif9fjrk5";
+      sha256 = "1zn6z9wy291mkvhxng347mah8r7r2ff3c3c46nl8mrfg5p74zgp1";
     };
 
     "${config.xdg.configHome}/mpv/mpv.conf".text = ''
@@ -97,7 +97,7 @@ in
   programs = {
     ghostty = {
       enable = true;
-      package = pkgs.emptyDirectory;
+      package = null;
       settings = {
         theme = "Red Alert";
         confirm-close-surface = false;
@@ -107,8 +107,7 @@ in
         ];
         app-notifications = "no-clipboard-copy";
       };
-      # we use Ghostty package from local system so no bat syntax file in nix store
-      installBatSyntax = false;
+      systemd.enable = false;
     };
     fish = {
       enable = true;
@@ -211,6 +210,9 @@ in
       };
       "ssh_keys/oracle_vps" = {
         path = "${config.home.homeDirectory}/.ssh/oracle_vps";
+      };
+      "ssh_keys/dmit_pro_vps" = {
+        path = "${config.home.homeDirectory}/.ssh/dmit_pro_vps";
       };
       "ssh_keys/config" = {
         path = "${config.home.homeDirectory}/.ssh/config";

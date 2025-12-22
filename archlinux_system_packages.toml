@@ -35,7 +35,7 @@ arch = [
 "fwupd",
 "git",
 "less",
-"metapac-bin",
+"metapac",
 "ncdu",
 "nix",
 "7zip",

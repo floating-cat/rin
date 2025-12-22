@@ -39,3 +39,9 @@ sudo ln -s /usr/bin/distrobox-host-exec /usr/bin/dolphin
 paru qt6-base # needed for xdg-mime command
 set PATH $PATH:/usr/lib/qt6/bin/
 xdg-mime default dolphin.desktop inode/directory
+
+systemctl enable --user app-com.mitchellh.ghostty.service
+
+# for Nix: https://wiki.archlinux.org/title/Nix#Configuration
+nix-channel --add https://nixos.org/channels/nixpkgs-unstable
+nix-channel --update
